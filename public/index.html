@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Shop - Holzprodukte</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #6b4f1d;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      padding: 20px;
+    }
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .product {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .product img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    .cart {
+      margin-top: 20px;
+      padding: 10px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-container {
+      margin-top: 20px;
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-container input {
+      width: calc(100% - 22px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #6b4f1d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #553c17; /* Dunklere Farbe beim Hover */
+    }
+    .checkout strong {
+        display:block; 
+        margin-top:10px; 
+        font-size:18px; 
+        text-align:center; 
+        color:#333; 
+        font-weight:bold; 
+    }
+
+</style>
+</head>
+<body>
+<header>
+    <h1>Holzprodukte Online Shop</h1>
+</header>
+<main>
+    <h2>Produkte</h2>
+    <div class="product-list" id="product-list"></div>
+
+    <div class="cart" id="cart">
+        <h2>Warenkorb</h2>
+        <div id="cart-items"></div>
+        <div class="checkout">
+            <strong>Gesamt:<span id="total-price">0.00 €</span></strong>
+        </div>
+    </div>
+
+    <div class="form-container" id="form-container">
+        <h2>Versandinformationen</h2>
+        <!-- Formular zum Absenden von Bestellungen -->
+        <form id="order-form" method="POST">
+            <input type="text" id="name" name="name" placeholder="Ihr Name" required>
+            <input type="email" id="email" name="email" placeholder="Ihre E-Mail-Adresse" required>
+            <input type="text" id="address" name="address" placeholder="Straße und Hausnummer" required>
+            <input type="text" id="postal" name="postal" placeholder="Postleitzahl" required>
+            <input type="text" id="city" name="city" placeholder="Stadt" required>
+            <!-- Feld für Personalisierung -->
+            <input type="text" id="personalization" name="personalization" placeholder="Personalisierung (optional)">
+            <!-- Versteckte Felder zum Speichern von Warenkorbdaten -->
+            <input type="hidden" id="cart-details" name="cart_details">
+            <input type="hidden" id="total-price-hidden" name "total_price">
+            <button type ="submit">Bestellung abschicken</button>
+        </form>
+   </div>
+
+</main>
+
+<script>
+// Produkte-Daten
+const products = [
+   {id :1 ,name :"Holzstuhl", price :49.99 , image :"https://via.placeholder.com/200?text=Holzstuhl"},
+   {id :2 ,name :"Holztisch", price :89.99 , image :"https://via.placeholder.com/200?text=Holztisch"},
+   {id :3 ,name :"Holzbank", price :69.99 , image :"https://via.placeholder.com/200?text=Holzbank"},
+   {id :4 ,name :"Holzregal", price :39.99 , image :"https://via.placeholder.com/200?text=Holzregal"},
+   {id :5 ,name :"Schneidebrett", price :19.99 , image :"https://via.placeholder.com/200?text=Schneidebrett"}
+];
+
+// Warenkorb
+let cart = [];
+
+// Produkte rendern
+function renderProducts() {
+   const productList = document.getElementById('product-list');
+   productList.innerHTML = ""; // Liste leeren
+   products.forEach(product => {
+       const productDiv = document.createElement('div');
+       productDiv.className = 'product';
+       productDiv.innerHTML = `
+         <img src="${product.image}" alt="${product.name}">
+         <h2>${product.name}</h2>
+         <p>${product.price.toFixed(2)} €</p>
+         <button onclick ="addToCart(${product.id})">In den Warenkorb</button>`;
+       productList.appendChild(productDiv);
+   });
+}
+
+// Produkt in den Warenkorb hinzufügen
+function addToCart(productId) {
+   const product = products.find(p => p.id === productId);
+   cart.push(product);
+   renderCart();
+}
+
+// Warenkorb rendern
+function renderCart() {
+   const cartItems = document.getElementById('cart-items');
+   cartItems.innerHTML = '';
+
+   if(cart.length ===0){
+     cartItems.innerHTML = '<p>Der Warenkorb ist leer.</p>';
+   }else{
+     cart.forEach(item => {
+         const cartItem = document.createElement('div');
+         cartItem.textContent = `${item.name} - ${item.price.toFixed(2)} €`;
+         cartItems.appendChild(cartItem);
+     });
+   }
+
+   const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+   document.getElementById('total-price').textContent = `${totalPrice.toFixed(2)} €`;
+}
+
+// Bestellung abschicken
+document.getElementById('order-form').addEventListener('submit', async (e) => {
+   e.preventDefault();
+
+   const cartDetailsString = cart.map(item => `${item.name} (${item.price.toFixed(2)} €)`).join(', ');
+   const totalPrice = document.getElementById('total-price').textContent.replace(' €', '');
+
+   const orderData = {
+       name : document.getElementById('name').value,
+       email : document.getElementById('email').value,
+       address : document.getElementById('address').value,
+       postal : document.getElementById('postal').value,
+       city : document.getElementById('city').value,
+       personalization : document.getElementById('personalization').value,
+       cartDetails : cartDetailsString,
+       totalPrice : totalPrice
+   };
+
+   try {
+       const response = await fetch('http://localhost:3000/submit-order', { // Korrigierte URL
+           method : 'POST',
+           headers : {'Content-Type': 'application/json'},
+           body : JSON.stringify(orderData)
+       });
+
+       if (response.ok) {
+           // Zur Bestätigungsseite navigieren
+           window.location.href = `confirmation.html?totalPrice=${totalPrice}`;
+           // Reset des Formulars und des Warenkorbs nach erfolgreicher Bestellung
+           document.getElementById('order-form').reset();
+           cart = [];
+           renderCart();
+       } else {
+           alert('Fehler beim Speichern der Bestellung.');
+       }
+   } catch (error) {
+       console.error('Fehler:', error);
+       alert('Netzwerkfehler.');
+   }
+}
+
+// Produkte initial rendern
+,renderProducts());
+</script>
+
+</body>
+</html>

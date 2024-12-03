@@ -1,0 +1,6 @@
+[
+    {"id": 1, "name": "Holzstuhl", "price": 49.99, "image": "https://via.placeholder.com/200?text=Holzstuhl"},
+    {"id": 2, "name": "Holztisch", "price": 89.99, "image": "https://via.placeholder.com/200?text=Holztisch"},
+    {"id": 3, "name": "Holzbank", "price": 69.99, "image": "https://via.placeholder.com/200?text=Holzbank"},
+    {"id": 4, "name": "Holzregal", "price": 39.99, "image": "https://via.placeholder.com/200?text=Holzregal"}
+]

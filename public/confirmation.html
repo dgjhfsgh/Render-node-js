@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bestellbestätigung</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+      text-align: center;
+    }
+    .confirmation {
+      background-color: #6b4f1d;
+      color: white;
+      padding: 20px;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #553c17;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3e2b12;
+    }
+    .email-form {
+      margin-top: 20px;
+    }
+    .email-form input {
+      padding: 10px;
+      width: calc(100% - 22px);
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div class="confirmation">
+    <h2>Bestellung erfolgreich!</h2>
+    <p>Bitte überweisen Sie den Betrag von <span id="total-price-confirmation"></span> auf das Konto IBAN:</p>
+    <p><strong>DE34 7605 0101 0012 0358 61</strong></p>
+    <p>Anfertigung und Versand erfolgt erst nach Bezahlung der Ware.</p>
+
+    <!-- Email-Beleg Formular -->
+    <div class="email-form">
+        <input type="email" id="email" placeholder="E-Mail-Adresse für den Beleg" required>
+        <button onclick="sendEmail()">Beleg senden</button>
+    </div>
+
+    <button onclick="window.location.href='index.html'">Zurück zu den Produkten</button>
+</div>
+
+<script>
+// URL-Parameter lesen
+const params = new URLSearchParams(window.location.search);
+const totalPrice = params.get('totalPrice');
+document.getElementById('total-price-confirmation').textContent = totalPrice + ' €';
+
+// Funktion zum Senden der E-Mail
+function sendEmail() {
+    const email = document.getElementById('email').value;
+    if (email) {
+        // Simulierter E-Mail-Versand (in der Realität benötigen Sie einen Backend-Service)
+        alert(`Ein Beleg wurde an ${email} gesendet.`);
+        // Hier könnten Sie eine Anfrage an Ihr Backend senden, um die E-Mail zu versenden
+    } else {
+        alert('Bitte geben Sie eine gültige E-Mail-Adresse ein.');
+    }
+}
+</script>
+
+</body>
+</html>
